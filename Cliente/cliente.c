@@ -92,11 +92,15 @@ int main(int *argc, char *argv[])
 					switch(estado)
 					{
 					case S_HELO:
-						// Se recibe el mensaje de bienvenida
+						printf("Entramos en la maquina de estados\r \n");
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",HE,CRLF);
+							estado=S_MAIL;
+
 						break;
-					case S_USER:
-						// establece la conexion de aplicacion 
-						printf("CLIENTE> Introduzca el usuario (enter para salir): ");
+					case S_MAIL:
+						// establece la conexion de aplicacion
+						printf("Entramos en S_MAIL\r \n");
+						printf("CLIENTE> Mail from: (enter para salir): ");
 						gets(input);
 						if(strlen(input)==0)
 						{
@@ -104,10 +108,12 @@ int main(int *argc, char *argv[])
 							estado=S_QUIT;
 						}
 						else
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",SC,input,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",MA,input,CRLF);
+							estado=S_RCPT;
 						break;
-					case S_PASS:
-						printf("CLIENTE> Introduzca la clave (enter para salir): ");
+					case S_RCPT:
+						printf("Entramos en S_RCPT\r \n");
+						printf("CLIENTE> Mail to: (enter para salir): ");
 						gets(input);
 						if(strlen(input)==0)
 						{
@@ -115,24 +121,20 @@ int main(int *argc, char *argv[])
 							estado=S_QUIT;
 						}
 						else
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",PW,input,CRLF);
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",RC,input,CRLF);
+							estado=S_DATA;
 						break;
 					case S_DATA:
-						printf("CLIENTE> Introduzca datos (enter o QUIT para salir): ");
+						printf("Entramos en S_DATA\r \n");
+						printf("CLIENTE> Introduzca datos: (enter o QUIT para salir): ");
 						gets(input);
 						if(strlen(input)==0)
 						{
 							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);
 							estado=S_QUIT;
 						}
-						else if(strcmp(input, SUM)==0)
-						{
-							printf("CLIENTE> Introduzca el primer numero( menos de 4 numeros):");
-							gets(numero1);
-							printf("CLIENTE> Introduzca el segundo numero( menos de 4 numeros):");
-							gets(numero2);
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s %s %s%s",SUM,numero1,numero2,CRLF);
-							}
+						sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",DA,input,CRLF);
+
 						break;
 				 
 				
