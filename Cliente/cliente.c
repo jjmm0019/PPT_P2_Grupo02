@@ -28,7 +28,8 @@ int main(int *argc, char *argv[])
 {
 	SOCKET sockfd;
 	struct sockaddr_in server_in;
-	char buffer_in[1024], buffer_out[1024],input[1024];
+	char buffer_in[1024], buffer_out[1024],input[1024] , buffer[1024];
+	char subject[1000], date[1000],to[1000],from[1000];
 	int recibidos=0,enviados=0;
 	int estado=S_HELO;
 	char option;
@@ -94,7 +95,7 @@ int main(int *argc, char *argv[])
 					case S_HELO:
 						printf("Entramos en la maquina de estados\r \n");
 						sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",HE,CRLF);
-							estado=S_MAIL;
+					
 
 						break;
 					case S_MAIL:
@@ -126,21 +127,40 @@ int main(int *argc, char *argv[])
 						break;
 					case S_DATA:
 						printf("Entramos en S_DATA\r \n");
-						printf("CLIENTE> Introduzca datos: (enter o QUIT para salir): ");
+						
+						
+							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",DA,CRLF);
+							estado=S_MENSAJE;
+						
+
+						break;
+					case S_MENSAJE:
+						printf("Entramos en S_MENSAJE\r \n");
+
+						
+						printf("Introduce fecha: \r\n");
 						gets(input);
-						if(strlen(input)==0)
-						{
-							sprintf_s (buffer_out, sizeof(buffer_out), "%s%s",SD,CRLF);
-							estado=S_QUIT;
+						sprintf (date,"date:", "%s%s",input,CRLF);
+						printf("Introduce asunto: \r\n");
+						gets(input);
+						sprintf(subject, "subject:", "%s%s",input,CRLF);
+						printf("Introduce destinatario: \r\n");
+						gets(input);
+						sprintf (to, "to:", "%s%s",input,CRLF);
+						printf("Introduce remitente: \r\n");
+						gets(input);
+						sprintf(from, "from:", "%s%s",input,CRLF);
+						sprintf(buffer_out,"%s%s%s%s",date,subject,to,from);
+
 						}
-						sprintf_s (buffer_out, sizeof(buffer_out), "%s %s%s",DA,input,CRLF);
 
 						break;
 				 
 				
-					}
+					}//fin switch
+
 					//Envio
-					if(estado!=S_HELO){
+					//if(estado!=S_HELO){
 					// Ejercicio: Comprobar el estado de envio
 					enviados=send(sockfd,buffer_out,(int)strlen(buffer_out),0);
 
@@ -184,8 +204,9 @@ int main(int *argc, char *argv[])
 					{
 						buffer_in[recibidos]=0x00;
 						printf(buffer_in);
-						if(estado!=S_DATA && strncmp(buffer_in,OK,2)==0) 
-							estado++;  
+						//if(estado!=S_DATA && strncmp(buffer_in,OK,2)==0)
+						if(estado!=S_DATA && strncmp(buffer_in,"2",1)==0)
+							estado++;
 					}
 					
 				}while(estado!=S_QUIT);
