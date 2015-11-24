@@ -29,8 +29,10 @@ int main(int *argc, char *argv[])
 	SOCKET sockfd;
 	struct sockaddr_in server_in;
 	char buffer_in[1024], buffer_out[1024],input[1024] , buffer[1024];
-	char subject[1000], date[1000],to[1000],from[1000],mensaje[1000];
+	char subject[1000], date[1000],to[1000],from[1000];
+	//char mensaje[1000];
 	int recibidos=0,enviados=0;
+	int fecha;
 	int estado=S_HELO;
 	char option;
 
@@ -139,9 +141,10 @@ int main(int *argc, char *argv[])
 						printf("Entramos en S_MENSAJE\r \n");
 
 
-						printf("Introduce fecha: \r\n");
-						gets(input);
-						sprintf (date,"date: %s%s",input,CRLF);
+						//printf("Introduce fecha: \r\n");
+						fecha=getTimeZone();
+						sprintf(date,"%d",fecha);
+						//sprintf(buffer,"date: %s%s",date,CRLF);
 						printf("Introduce asunto: \r\n");
 						gets(input);
 						sprintf(subject, "subject: %s%s",input,CRLF);
@@ -151,10 +154,20 @@ int main(int *argc, char *argv[])
 						printf("Introduce remitente: \r\n");
 						gets(input);
 						sprintf(from, "from: %s%s",input,CRLF);
-						printf("Introduce mensaje: \r\n");
-						gets(input);
-						sprintf(mensaje, "\r\n %s%s",input,CRLF);
-						sprintf(buffer_out,"%s%s%s%s%s %s.%s",date,subject,to,from,mensaje,CRLF,CRLF);
+
+						sprintf(buffer_out,"%s%s%s",subject,to,from);
+						printf("Introduce mensaje:( para finalizar introduce solo un punto) \r\n");
+						//gets(input);
+
+						do{
+							gets(input);
+							strcpy(buffer,input);
+							strcat(buffer,CRLF);
+							strcat(buffer_out,buffer);
+						}while(strcmp(input,".\r\n") == 1);
+
+						//sprintf(mensaje, "%s",input);
+						//sprintf(buffer_out,"%s%s%s%s%s",date,subject,to,from,mensaje);
 						//montamos el mensaje
 
 
@@ -254,4 +267,19 @@ int main(int *argc, char *argv[])
 
 	return(0);
 
+}
+
+int getTimeZone(){
+   TIME_ZONE_INFORMATION tziOld;
+   DWORD dwRet;
+   dwRet = GetTimeZoneInformation(&tziOld);
+   
+   if(dwRet == TIME_ZONE_ID_STANDARD || dwRet == TIME_ZONE_ID_UNKNOWN)    
+		tziOld.StandardBias/60;
+   else if( dwRet == TIME_ZONE_ID_DAYLIGHT )
+		return tziOld.DaylightBias/60;
+   else{
+      printf("GTZI failed (%d)\n", GetLastError());
+      return 0;
+   }
 }
