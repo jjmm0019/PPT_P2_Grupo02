@@ -29,10 +29,10 @@ int main(int *argc, char *argv[])
 	SOCKET sockfd;
 	struct sockaddr_in server_in;
 	char buffer_in[1024], buffer_out[1024],input[1024] , buffer[1024];
-	char subject[1000], date[1000],to[1000],from[1000];
+	char subject[1000], date[1000],to[1000],from[1000],fecha[1000];
 	//char mensaje[1000];
 	int recibidos=0,enviados=0;
-	int fecha;
+	
 	int estado=S_HELO;
 	char option;
 
@@ -142,8 +142,8 @@ int main(int *argc, char *argv[])
 
 
 						//printf("Introduce fecha: \r\n");
-						fecha=getTimeZone();
-						sprintf(date,"%d",fecha);
+						hora(fecha);
+						sprintf(date,"date:%s%s",fecha,CRLF);
 						//sprintf(buffer,"date: %s%s",date,CRLF);
 						printf("Introduce asunto: \r\n");
 						gets(input);
@@ -155,7 +155,7 @@ int main(int *argc, char *argv[])
 						gets(input);
 						sprintf(from, "from: %s%s",input,CRLF);
 
-						sprintf(buffer_out,"%s%s%s",subject,to,from);
+						sprintf(buffer_out,"%s%s%s%s%s",date,subject,to,from,CRLF);
 						printf("Introduce mensaje:( para finalizar introduce solo un punto) \r\n");
 						//gets(input);
 
@@ -282,4 +282,17 @@ int getTimeZone(){
       printf("GTZI failed (%d)\n", GetLastError());
       return 0;
    }
+
+
+}
+
+char* hora(char* output){
+
+	    time_t tiempo = time(0);
+        struct tm *tlocal = localtime(&tiempo);
+        strftime(output,128,"%d/%m/%y %H:%M:%S",tlocal);
+		sprintf(output,"%s %d",output,getTimeZone());
+
+
+        return output;
 }

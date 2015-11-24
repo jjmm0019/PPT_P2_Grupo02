@@ -1,7 +1,7 @@
 #ifndef protocolostpte_practicas_headerfile
 #define protocolostpte_practicas_headerfile
 #endif
-
+char* hora(char* output);
 // COMANDOS DE APLICACION
 #define SC "USER"  // SOLICITUD DE CONEXION USER usuario 
 #define PW "PASS"  // Password del usuario  PASS password
