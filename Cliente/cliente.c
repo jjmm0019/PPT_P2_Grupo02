@@ -164,6 +164,20 @@ int main(int *argc, char *argv[])
 							strcpy(buffer,input);
 							strcat(buffer,CRLF);
 							strcat(buffer_out,buffer);
+							/******************************************************* 
+							NOTA DEL PROFESOR:
+							Esta comprobación está mal, debería ser: 
+							strcmp(input,".\r\n") == 0 
+							para asegurar que input tiene los el punto y CRLF, 
+							pero la variable que deberíais haber utilzado es buffer, 
+							a la que sí le concatenéis el CRLF.
+							Al haber puesto ==1 en vez de ==0 sí os sale del bucle con un punto,
+							pero también con un espacio o un punto, porque la comprobación es
+							lexicográfica.
+
+							Además, no podríais enviar un correo más largo de la longitud
+							de buffer_out, lo cual no cumple con los objetivos.
+							******************************************************/
 						}while(strcmp(input,".\r\n") == 1);
 
 						//sprintf(mensaje, "%s",input);
